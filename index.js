@@ -8,7 +8,7 @@ const USER_DATA_DIR = path.join(__dirname, "puppeteer_cache");
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
 const pages = 100;
-const loadContentDelay = 3000;
+const loadContentDelay = 1000;
 
 const downloadImage = async (url, filepath) => {
   const response = await axios({
@@ -44,10 +44,11 @@ async function autoScroll(page) {
 
 const scrapePage = async (pageNumber) => {
   const url = `https://coinmarketcap.com/?page=${pageNumber}`;
-  console.log(`Парсим страницу ${pageNumber}: ${url}`);
+  console.log(`Parse page ${pageNumber} / ${pages}: ${url}`);
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
+    // headless: false,
     userDataDir: USER_DATA_DIR, // Папка для кэширования
   });
   const page = await browser.newPage();
@@ -127,10 +128,10 @@ const saveIcons = async (coins) => {
     const filepath = path.join(dataDir, `${coinName}${fileExtension}`);
 
     try {
-      console.log(`Скачиваем: ${coinName} из ${imageUrl}`);
+      console.log(`Download ${coinName} from ${imageUrl}`);
       await downloadImage(imageUrl, filepath);
     } catch (err) {
-      console.error(`Ошибка при скачивании ${coinName}: ${err}`);
+      console.error(`Error while downloading ${coinName}: ${err}`);
     }
   }
 };
@@ -139,7 +140,7 @@ const scrapeAllPages = async () => {
   for (let i = 1; i < pages; i++) {
     const coins = await scrapePage(i);
     if (coins.length === 0) {
-      console.log(`Нет данных на странице ${i}`);
+      console.log(`No new data on the page ${i}`);
       // break;
     } else {
       await saveIcons(coins);
