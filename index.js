@@ -7,6 +7,9 @@ const USER_DATA_DIR = path.join(__dirname, "puppeteer_cache");
 
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
+const pages = 100;
+const loadContentDelay = 3000;
+
 const downloadImage = async (url, filepath) => {
   const response = await axios({
     url,
@@ -77,7 +80,7 @@ const scrapePage = async (pageNumber) => {
   //     window.scrollTo(0, document.body.scrollHeight);
   // });
   // await page.waitForTimeout(2000); // Ожидание загрузки контента
-  await sleep(3000);
+  await sleep(loadContentDelay);
 
   // Парсинг таблицы
   const coins = await page.evaluate(() => {
@@ -119,7 +122,7 @@ const saveIcons = async (coins) => {
 
   for (const coin of coins) {
     const imageUrl = coin.imgSrc;
-    const coinName = coin.coinName?.toLowerCase();
+    const coinName = coin.coinName?.toLowerCase().replace("/", "-");
     const fileExtension = path.extname(imageUrl).split("?")[0]; // Получаем расширение файла
     const filepath = path.join(dataDir, `${coinName}${fileExtension}`);
 
@@ -133,16 +136,15 @@ const saveIcons = async (coins) => {
 };
 
 const scrapeAllPages = async () => {
-  for (let i = 1; i < 100; i++) {
-    // console.log(`Парсим страницу ${i}`);
+  for (let i = 1; i < pages; i++) {
     const coins = await scrapePage(i);
     if (coins.length === 0) {
       console.log(`Нет данных на странице ${i}`);
-      break;
+      // break;
+    } else {
+      await saveIcons(coins);
     }
-    await saveIcons(coins);
   }
-  console.log("Парсинг завершен.");
 };
 
-scrapeAllPages();
+scrapeAllPages().then(() => console.log("Parsing is done"));
