@@ -7,7 +7,7 @@ const USER_DATA_DIR = path.join(__dirname, "puppeteer_cache");
 
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
-const pages = 100;
+const pages = 104;
 const loadContentDelay = 1000;
 
 const downloadImage = async (url, filepath) => {
