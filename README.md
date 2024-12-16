@@ -1,7 +1,7 @@
 # All crypto coin icons and logos
 
-Here is about 10'000 logos in PNG format 64x64 pixels,
-scraped from CoinMarketCap website.
+Here is about 20'000 logos in PNG format 64x64 pixels,
+scraped from CoinMarketCap website and API.
 
 
 
